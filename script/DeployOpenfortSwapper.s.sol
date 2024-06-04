@@ -3,7 +3,7 @@ pragma solidity 0.8.26;
 
 import {Script, console} from "forge-std/Script.sol";
 
-contract DeployERC20TokenSwap is Script {
+contract DeployOpenfortSwapper is Script {
     function setUp() public {}
 
     function run() public {
