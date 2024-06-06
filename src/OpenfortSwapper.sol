@@ -3,11 +3,17 @@ pragma solidity 0.8.26;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ISwapRouter} from "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+import {TransferHelper} from "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 
 contract OpenfortSwapper {
     address[] s_recipients;
     ShippingTime s_shippingTime;
     uint256 s_fee;
+
+    ISwapRouter public immutable i_swapRouter;
+
+    address constant USDC_TOKEN = 0xaaaa;
+    uint24 public constant POOL_FEE = 3000;
 
     enum ShippingTime {
         Immediatly,
@@ -15,13 +21,31 @@ contract OpenfortSwapper {
         OnceAWeek
     }
 
-    constructor(address[] memory recipients, ShippingTime shippingTime, uint256 fee) {
+    constructor(address[] memory recipients, ShippingTime shippingTime, uint256 fee, ISwapRouter router) {
         s_recipients = recipients;
         s_shippingTime = shippingTime;
         s_fee = fee;
+        i_swapRouter = router;
     }
 
-    function swap(IERC20 paidToken) external {}
+    function swap(IERC20 token, uint256 amount) external {
+        address from = msg.sender;
+        TransferHelper.safeTransferFrom(token, from, address(this), amount);
+        TransferHelper.safeApprove(token, address(i_swapRouter), amount);
+
+        ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
+            tokenIn: token,
+            tokenOut: USDC_TOKEN,
+            fee: poolFee,
+            recipient: msg.sender,
+            deadline: block.timestamp,
+            amountIn: amountIn,
+            amountOutMinimum: 0,
+            sqrtPriceLimitX96: 0
+        });
+ 
+        amountOut = swapRouter.exactInputSingle(params);
+    }
 
     function setFee(uint256 newFee) external {
         s_fee = newFee;
