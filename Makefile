@@ -1,4 +1,4 @@
-.PHONY: all test clean deploy fund help install snapshot format anvil
+.PHONY: all test clean deploy-swapper fund help install snapshot format anvil
 
 include .env
 
@@ -39,14 +39,8 @@ ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
 	NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 endif
 
-deploy:
-	@forge script script/DeployMatchWeekFactory.s.sol:DeployMatchWeekFactory $(NETWORK_ARGS)
+deploy-swapper:
+	@forge script script/DeployOpenfortSwapper.s.sol:DeployOpenfortSwapper $(NETWORK_ARGS)
 
-# For deploying Interactions.s.sol:FundFundMe as well as for Interactions.s.sol:WithdrawFundMe we have to include a sender's address `--sender <ADDRESS>`
-#SENDER_ADDRESS := <sender's address>
-
-#fund:
-#	@forge script script/Interactions.s.sol:FundFundMe --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)
-
-#withdraw:
-#	@forge script script/Interactions.s.sol:WithdrawFundMe --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)
+deploy-tokens:
+	@forge script script/DeployFakeTokens.s.sol:DeployFakeTokens $(NETWORK_ARGS)

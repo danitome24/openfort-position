@@ -12,7 +12,7 @@ contract OpenfortSwapper {
 
     ISwapRouter public immutable i_swapRouter;
 
-    address constant USDC_TOKEN = 0xaaaa;
+    address constant USDC_TOKEN = 0xF4A8f74879182FF2A07468508bec89e1E7464027;
     uint24 public constant POOL_FEE = 3000;
 
     enum ShippingTime {
@@ -30,21 +30,22 @@ contract OpenfortSwapper {
 
     function swap(IERC20 token, uint256 amount) external {
         address from = msg.sender;
-        TransferHelper.safeTransferFrom(token, from, address(this), amount);
-        TransferHelper.safeApprove(token, address(i_swapRouter), amount);
+        address tokenAddress = address(token);
+        TransferHelper.safeTransferFrom(tokenAddress, from, address(this), amount);
+        TransferHelper.safeApprove(tokenAddress, address(i_swapRouter), amount);
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
-            tokenIn: token,
+            tokenIn: tokenAddress,
             tokenOut: USDC_TOKEN,
-            fee: poolFee,
+            fee: POOL_FEE,
             recipient: msg.sender,
             deadline: block.timestamp,
-            amountIn: amountIn,
+            amountIn: amount,
             amountOutMinimum: 0,
             sqrtPriceLimitX96: 0
         });
  
-        amountOut = swapRouter.exactInputSingle(params);
+        uint256 amountOut = i_swapRouter.exactInputSingle(params);
     }
 
     function setFee(uint256 newFee) external {
