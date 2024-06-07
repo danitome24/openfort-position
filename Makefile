@@ -1,4 +1,4 @@
-.PHONY: all test clean deploy-swapper fund help install snapshot format anvil
+.PHONY: all test clean deploy-swapper fund help install snapshot format anvil mint-fake-token
 
 include .env
 
@@ -44,3 +44,6 @@ deploy-swapper:
 
 deploy-tokens:
 	@forge script script/DeployFakeTokens.s.sol:DeployFakeTokens $(NETWORK_ARGS)
+
+mint-fake-token:
+	@cast send 0x5FbDB2315678afecb367f032d93F642f64180aa3 "mint(address,uint256)" 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 1000 --private-key $(DEFAULT_ANVIL_KEY)
