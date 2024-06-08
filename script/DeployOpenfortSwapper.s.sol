@@ -5,19 +5,21 @@ import {Script, console} from "forge-std/Script.sol";
 import {OpenfortSwapper} from "../src/OpenfortSwapper.sol";
 import {ISwapRouter} from "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import {MockSwapRouter} from "../src/mock/MockSwapRouter.sol";
+import {HelperConfig} from "./HelperConfig.s.sol";
 
 contract DeployOpenfortSwapper is Script {
     uint256 private constant INITIAL_FEE = 30; // 30%
 
-    function setUp() public {}
-
     function run() public {
         address[] memory initialRecipients = new address[](0);
+
+        HelperConfig helperConfig = new HelperConfig();
+        (,,address stablecoin) = helperConfig.activeNetworkConfig();
 
         vm.startBroadcast();
         ISwapRouter swapRouter = new MockSwapRouter();
         OpenfortSwapper swapper =
-            new OpenfortSwapper(initialRecipients, OpenfortSwapper.ShippingTime.Immediatly, INITIAL_FEE, swapRouter);
+            new OpenfortSwapper(initialRecipients, OpenfortSwapper.ShippingTime.Immediatly, INITIAL_FEE, swapRouter, stablecoin);
         vm.stopBroadcast();
 
         console.log("SwapRouter deployed at: %s", address(swapRouter));

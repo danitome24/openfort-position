@@ -6,6 +6,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ISwapRouter} from "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import {TransferHelper} from "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import {MockERC20} from "./mock/MockERC20.sol";
+import {HelperConfig} from "../script/HelperConfig.s.sol";
 
 contract OpenfortSwapper {
     address[] s_recipients;
@@ -13,8 +14,8 @@ contract OpenfortSwapper {
     uint256 s_fee;
 
     ISwapRouter public immutable i_swapRouter;
+    address immutable i_stablecoin;
 
-    address constant MATIC_TOKEN = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
     address constant USDC_TOKEN = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
     uint24 constant POOL_FEE = 3000;
 
@@ -24,23 +25,26 @@ contract OpenfortSwapper {
         OnceAWeek
     }
 
-    constructor(address[] memory recipients, ShippingTime shippingTime, uint256 fee, ISwapRouter router) {
+    constructor(address[] memory recipients, ShippingTime shippingTime, uint256 fee, ISwapRouter router, address stablecoin) {
         s_recipients = recipients;
         s_shippingTime = shippingTime;
         s_fee = fee;
         i_swapRouter = router;
+        i_stablecoin = stablecoin;
     }
 
     function swap(IERC20 token, uint256 amount) external {
         address from = msg.sender;
         address to = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
-        address tokenAddress = MATIC_TOKEN;
+
+        address tokenAddress = address(token);
+
         TransferHelper.safeTransferFrom(tokenAddress, from, address(this), amount);
         TransferHelper.safeApprove(tokenAddress, address(i_swapRouter), amount);
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
-            tokenIn: MATIC_TOKEN,
-            tokenOut: USDC_TOKEN,
+            tokenIn: tokenAddress,
+            tokenOut: i_stablecoin,
             fee: POOL_FEE,
             recipient: to,
             deadline: block.timestamp,
@@ -49,7 +53,7 @@ contract OpenfortSwapper {
             sqrtPriceLimitX96: 0
         });
 
-        uint256 amountOut = i_swapRouter.exactInputSingle(params);
+        i_swapRouter.exactInputSingle(params);
     }
 
     function setFee(uint256 newFee) external {
