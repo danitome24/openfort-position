@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
+import {console} from "forge-std/Script.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ISwapRouter} from "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import {TransferHelper} from "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
+import {MockERC20} from "./mock/MockERC20.sol";
 
 contract OpenfortSwapper {
     address[] s_recipients;
@@ -12,8 +14,9 @@ contract OpenfortSwapper {
 
     ISwapRouter public immutable i_swapRouter;
 
-    address constant USDC_TOKEN = 0xF4A8f74879182FF2A07468508bec89e1E7464027;
-    uint24 public constant POOL_FEE = 3000;
+    address constant MATIC_TOKEN = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
+    address constant USDC_TOKEN = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
+    uint24 constant POOL_FEE = 3000;
 
     enum ShippingTime {
         Immediatly,
@@ -30,15 +33,16 @@ contract OpenfortSwapper {
 
     function swap(IERC20 token, uint256 amount) external {
         address from = msg.sender;
-        address tokenAddress = address(token);
+        address to = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
+        address tokenAddress = MATIC_TOKEN;
         TransferHelper.safeTransferFrom(tokenAddress, from, address(this), amount);
         TransferHelper.safeApprove(tokenAddress, address(i_swapRouter), amount);
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
-            tokenIn: tokenAddress,
+            tokenIn: MATIC_TOKEN,
             tokenOut: USDC_TOKEN,
             fee: POOL_FEE,
-            recipient: msg.sender,
+            recipient: to,
             deadline: block.timestamp,
             amountIn: amount,
             amountOutMinimum: 0,

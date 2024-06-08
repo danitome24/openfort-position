@@ -11,7 +11,7 @@ contract DeployFakeTokens is Script {
         MockERC20 mockMaticToken = new MockERC20("Matic Token", "MATIC");
         vm.stopBroadcast();
 
-        console.log("USDC Token address %s", address(mockUsdcToken));
         console.log("MATIC Token address %s", address(mockMaticToken));
+        console.log("USDC Token address %s", address(mockUsdcToken));
     }
 }

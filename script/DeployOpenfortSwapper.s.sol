@@ -3,6 +3,7 @@ pragma solidity 0.8.26;
 
 import {Script, console} from "forge-std/Script.sol";
 import {OpenfortSwapper} from "../src/OpenfortSwapper.sol";
+import {ISwapRouter} from "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import {MockSwapRouter} from "../src/mock/MockSwapRouter.sol";
 
 contract DeployOpenfortSwapper is Script {
@@ -14,11 +15,12 @@ contract DeployOpenfortSwapper is Script {
         address[] memory initialRecipients = new address[](0);
 
         vm.startBroadcast();
-        MockSwapRouter swapRouter = new MockSwapRouter();
+        ISwapRouter swapRouter = new MockSwapRouter();
         OpenfortSwapper swapper =
             new OpenfortSwapper(initialRecipients, OpenfortSwapper.ShippingTime.Immediatly, INITIAL_FEE, swapRouter);
         vm.stopBroadcast();
 
+        console.log("SwapRouter deployed at: %s", address(swapRouter));
         console.log("OpenfortSwapper deployed at: %s", address(swapper));
     }
 }

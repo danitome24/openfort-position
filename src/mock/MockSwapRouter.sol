@@ -15,7 +15,6 @@ contract MockSwapRouter is ISwapRouter {
     {
         require(params.amountIn > 0, "MockSwapRouter: amountIn must be greater than zero");
 
-        // Simulamos la transferencia de tokenIn del remitente al contrato
         IERC20(params.tokenIn).transferFrom(msg.sender, address(this), params.amountIn);
 
         // Simulamos una salida de tokens, simplemente devolvemos el amountIn como amountOut
@@ -33,17 +32,6 @@ contract MockSwapRouter is ISwapRouter {
         override
         returns (uint256 amountIn)
     {
-        require(params.amountOut > 0, "MockSwapRouter: amountOut must be greater than zero");
-
-        // Simulamos el cálculo del amountIn necesario
-        amountIn = params.amountOut;
-
-        // Simulamos la transferencia de tokenIn del remitente al contrato
-        IERC20(params.tokenIn).transferFrom(msg.sender, address(this), amountIn);
-
-        // Se "transfieren" tokens al destinatario
-        IERC20(params.tokenOut).transfer(params.recipient, params.amountOut);
-
         return 0;
     }
 
@@ -56,15 +44,4 @@ contract MockSwapRouter is ISwapRouter {
     }
 
     function uniswapV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes calldata data) external {}
-
-    // Función para simular agregar balances de tokens para testing
-    function addTokenBalance(address token, uint256 amount) external {
-        IERC20(token).transferFrom(msg.sender, address(this), amount);
-        balances[token] += amount;
-    }
-
-    // Función para obtener balances de tokens para testing
-    function getTokenBalance(address token) external view returns (uint256) {
-        return balances[token];
-    }
 }
