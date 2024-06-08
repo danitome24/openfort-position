@@ -4,7 +4,7 @@ pragma solidity 0.8.26;
 import {Script, console} from "forge-std/Script.sol";
 import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
 import {MockStablecoin} from "../src/mock/MockStablecoin.sol";
-import {MockERC20} from "../src/mock/MockERC20.sol";
+import {MockMaticToken} from "../src/mock/MockMaticToken.sol";
 
 contract MintStableTokens is Script {
     function run() external {
@@ -20,12 +20,12 @@ contract MintStableTokens is Script {
 
 contract MintERC20Tokens is Script {
     function run() external {
-        address latestMockERC20 = DevOpsTools.get_most_recent_deployment("MockERC20", block.chainid);
-        address latestMockSwapRouter = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266; // First anvil address.
+        address latestMockERC20 = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
+        address minter = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266; // First anvil address.
 
         vm.startBroadcast();
-        MockERC20 mockERC20 = MockERC20(latestMockERC20);
-        mockERC20.mint(latestMockSwapRouter, 10);
+        MockMaticToken mockERC20 = MockMaticToken(latestMockERC20);
+        mockERC20.mint(minter, 10);
         vm.stopBroadcast();
     }
 }

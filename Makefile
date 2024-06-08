@@ -49,6 +49,9 @@ deploy-tokens:
 mint-erc20-token:
 	@forge script script/MintTokens.s.sol:MintERC20Tokens $(NETWORK_ARGS)
 
+check-balance:
+	@forge script script/CheckBalance.s.sol:CheckBalance $(NETWORK_ARGS)
+
 SENDER_ADDRESS := 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 swap:
 	forge script script/InteractWithSwapper.s.sol:InteractWithSwapper --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)

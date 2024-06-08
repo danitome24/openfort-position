@@ -5,7 +5,6 @@ import {console} from "forge-std/Script.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ISwapRouter} from "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import {TransferHelper} from "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
-import {MockERC20} from "./mock/MockERC20.sol";
 import {HelperConfig} from "../script/HelperConfig.s.sol";
 
 contract OpenfortSwapper {
@@ -16,7 +15,7 @@ contract OpenfortSwapper {
     ISwapRouter public immutable i_swapRouter;
     address immutable i_stablecoin;
 
-    address constant USDC_TOKEN = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
+    address constant USDC_TOKEN = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
     uint24 constant POOL_FEE = 3000;
 
     enum ShippingTime {
@@ -44,7 +43,7 @@ contract OpenfortSwapper {
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
             tokenIn: tokenAddress,
-            tokenOut: i_stablecoin,
+            tokenOut: USDC_TOKEN,
             fee: POOL_FEE,
             recipient: to,
             deadline: block.timestamp,
