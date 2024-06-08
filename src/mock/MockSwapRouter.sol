@@ -32,15 +32,15 @@ contract MockSwapRouter is ISwapRouter {
         override
         returns (uint256 amountIn)
     {
-        return 0;
+        return params.amountInMaximum;
     }
 
     function exactInput(ExactInputParams calldata params) external payable returns (uint256 amountOut) {
-        return 0;
+        return params.amountIn;
     }
 
     function exactOutput(ExactOutputParams calldata params) external payable returns (uint256 amountIn) {
-        return 0;
+        return params.amountInMaximum;
     }
 
     function uniswapV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes calldata data) external {}

@@ -41,16 +41,13 @@ endif
 
 deploy-swapper:
 	@forge script script/DeployOpenfortSwapper.s.sol:DeployOpenfortSwapper $(NETWORK_ARGS)
+	@forge script script/MintTokens.s.sol:MintStableTokens $(NETWORK_ARGS)
 
 deploy-tokens:
 	@forge script script/DeployFakeTokens.s.sol:DeployFakeTokens $(NETWORK_ARGS)
 
-# Mint MATIC token to sender and mint USDC token to swapper.
-mint-fake-token:
-	@cast send 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 "mint(address,uint256)" 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 1000 --private-key $(DEFAULT_ANVIL_KEY) --rpc-url http://localhost:8545
-
-mint-usdc-token:
-	@cast send 0x5FbDB2315678afecb367f032d93F642f64180aa3 "mint(address,uint256)" 0x0B306BF915C4d645ff596e518fAf3F9669b97016 1000 --private-key $(DEFAULT_ANVIL_KEY) --rpc-url http://localhost:8545
+mint-erc20-token:
+	@forge script script/MintTokens.s.sol:MintERC20Tokens $(NETWORK_ARGS)
 
 SENDER_ADDRESS := 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 swap:

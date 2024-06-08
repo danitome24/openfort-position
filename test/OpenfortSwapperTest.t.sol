@@ -13,11 +13,13 @@ contract OpenfortSwapperTest is Test {
     address USER_ONE = makeAddr("user1");
     address USER_TWO = makeAddr("user2");
 
+    address STABLECOIN = makeAddr("stable");
+
     function setUp() external {
         address[] memory initialRecipients = new address[](1);
         initialRecipients[0] = USER_ONE;
         ISwapRouter swapRouter = new MockSwapRouter();
-        swapper = new OpenfortSwapper(initialRecipients, OpenfortSwapper.ShippingTime.Immediatly, INIT_FEES, swapRouter);
+        swapper = new OpenfortSwapper(initialRecipients, OpenfortSwapper.ShippingTime.Immediatly, INIT_FEES, swapRouter, STABLECOIN);
     }
 
     function testCanSetInitialParameters() public view {
