@@ -39,6 +39,7 @@ contract InteractWithSwapper is Script {
         vm.startBroadcast();
         maticToken.approve(lastSwapperDeployed, AMOUNT_TO_SEND);
         maticToken.approve(swapRouter, AMOUNT_TO_SEND);
+
         OpenfortSwapper swapper = OpenfortSwapper(lastSwapperDeployed);
         swapper.setRecipients(recipients);
         swapper.swap(maticToken, AMOUNT_TO_SEND);
