@@ -12,9 +12,7 @@ contract DeployOpenfortSwapper is Script {
     uint256 private constant INITIAL_FEE = 30; // 30%
 
     function run() public {
-        address[] memory initialRecipients = new address[](2);
-        initialRecipients[0] = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
-        initialRecipients[1] = 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC;
+        address[] memory initialRecipients = new address[](0);
 
         HelperConfig helperConfig = new HelperConfig();
         (address swapRouter, address stablecoin) = helperConfig.activeNetworkConfig();

@@ -20,7 +20,7 @@ contract HelperConfig is Script {
         } else if (block.chainid == 1) {
             activeNetworkConfig = getMainnetEthConfig();
         } else {
-            activeNetworkConfig = getAnvilConfig();
+            activeNetworkConfig = getOrCreateAnvilConfig();
         }
     }
 
@@ -28,7 +28,7 @@ contract HelperConfig is Script {
 
     function getMainnetEthConfig() private view returns (NetworkConfig memory) {}
 
-    function getAnvilConfig() private returns (NetworkConfig memory) {
+    function getOrCreateAnvilConfig() private returns (NetworkConfig memory) {
         address swapRouter;
         address stablecoin;
 

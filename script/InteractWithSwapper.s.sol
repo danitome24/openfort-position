@@ -14,7 +14,11 @@ contract InteractWithSwapper is Script {
     uint256 constant AMOUNT_TO_SEND = 2;
 
     function run() external {
-        address from = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
+        address from = msg.sender;
+        address[] memory recipients = new address[](2);
+        recipients[0] = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
+        recipients[1] = 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC;
+
         address stablecoin = DevOpsTools.get_most_recent_deployment("MockStablecoin", block.chainid);
         address maticTokenAddr = DevOpsTools.get_most_recent_deployment("MockMaticToken", block.chainid);
 
@@ -36,6 +40,7 @@ contract InteractWithSwapper is Script {
         maticToken.approve(lastSwapperDeployed, AMOUNT_TO_SEND);
         maticToken.approve(swapRouter, AMOUNT_TO_SEND);
         OpenfortSwapper swapper = OpenfortSwapper(lastSwapperDeployed);
+        swapper.setRecipients(recipients);
         swapper.swap(maticToken, AMOUNT_TO_SEND);
         vm.stopBroadcast();
 
