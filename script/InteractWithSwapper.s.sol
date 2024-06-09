@@ -18,10 +18,12 @@ contract InteractWithSwapper is Script {
         address stablecoin = DevOpsTools.get_most_recent_deployment("MockStablecoin", block.chainid);
         address maticTokenAddr = DevOpsTools.get_most_recent_deployment("MockMaticToken", block.chainid);
 
-        HelperConfig helperConfig = new HelperConfig();
-        (address swapRouter, address lastSwapperDeployed) = helperConfig.activeNetworkConfig();
+        address swapRouter = DevOpsTools.get_most_recent_deployment("MockSwapRouter", block.chainid);
+        address lastSwapperDeployed = DevOpsTools.get_most_recent_deployment("OpenfortSwapper", block.chainid);
 
-        console.log("ISwapper contract address: %s", swapRouter);
+        console.log("STablecoin %s", stablecoin);
+        console.log("Matic %s", maticTokenAddr);
+        console.log("SwapRouter contract address: %s", swapRouter);
         console.log("OpenfortSwap contract address: %s", lastSwapperDeployed);
 
         IERC20 usdcToken = MockStablecoin(stablecoin);

@@ -1,17 +1,18 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
-import {Script} from "forge-std/Script.sol";
+import {Script, console} from "forge-std/Script.sol";
 import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
+import {MockSwapRouter} from "../src/mock/MockSwapRouter.sol";
+import {MockStablecoin} from "../src/mock/MockStablecoin.sol";
 
 contract HelperConfig is Script {
     NetworkConfig public activeNetworkConfig;
 
     struct NetworkConfig {
         address swapRouter;
-        address openfortSwapper;
+        address stablecoin;
     }
-    //address stablecoin;
 
     constructor() {
         if (block.chainid == 11155111) {
@@ -27,11 +28,25 @@ contract HelperConfig is Script {
 
     function getMainnetEthConfig() private view returns (NetworkConfig memory) {}
 
-    function getAnvilConfig() private view returns (NetworkConfig memory) {
-        address swapRouter = DevOpsTools.get_most_recent_deployment("MockSwapRouter", block.chainid);
-        address lastSwapperDeployed = DevOpsTools.get_most_recent_deployment("OpenfortSwapper", block.chainid);
-        //address stablecoin = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
+    function getAnvilConfig() private returns (NetworkConfig memory) {
+        address swapRouter;
+        address stablecoin;
 
-        return NetworkConfig(swapRouter, lastSwapperDeployed /*, stablecoin*/ );
+        if (activeNetworkConfig.swapRouter == address(0)) {
+            vm.broadcast();
+            MockSwapRouter mockSwapRouter = new MockSwapRouter();
+            swapRouter = address(mockSwapRouter);
+        } else {
+            swapRouter = DevOpsTools.get_most_recent_deployment("MockSwapRouter", block.chainid);
+        }
+        if (activeNetworkConfig.stablecoin == address(0)) {
+            vm.broadcast();
+            MockStablecoin mockStablecoin = new MockStablecoin();
+            stablecoin = address(mockStablecoin);
+        } else {
+            stablecoin = DevOpsTools.get_most_recent_deployment("MockStablecoin", block.chainid);
+        }
+
+        return NetworkConfig(swapRouter, stablecoin);
     }
 }
