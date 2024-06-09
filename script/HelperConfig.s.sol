@@ -10,8 +10,8 @@ contract HelperConfig is Script {
     struct NetworkConfig {
         address swapRouter;
         address openfortSwapper;
-        //address stablecoin;
     }
+    //address stablecoin;
 
     constructor() {
         if (block.chainid == 11155111) {
@@ -32,6 +32,6 @@ contract HelperConfig is Script {
         address lastSwapperDeployed = DevOpsTools.get_most_recent_deployment("OpenfortSwapper", block.chainid);
         //address stablecoin = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
 
-        return NetworkConfig(swapRouter, lastSwapperDeployed/*, stablecoin*/);
+        return NetworkConfig(swapRouter, lastSwapperDeployed /*, stablecoin*/ );
     }
 }

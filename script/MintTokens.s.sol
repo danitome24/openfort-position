@@ -20,7 +20,7 @@ contract MintStableTokens is Script {
 
 contract MintERC20Tokens is Script {
     function run() external {
-        address latestMockERC20 = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
+        address latestMockERC20 = DevOpsTools.get_most_recent_deployment("MockMaticToken", block.chainid);
         address minter = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266; // First anvil address.
 
         vm.startBroadcast();

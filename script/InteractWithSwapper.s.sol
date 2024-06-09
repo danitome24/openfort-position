@@ -8,13 +8,14 @@ import {MockMaticToken} from "../src/mock/MockMaticToken.sol";
 import {MockStablecoin} from "../src/mock/MockStablecoin.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
+import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
 
 contract InteractWithSwapper is Script {
     function run() external {
         address from = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
         address to = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
-        address stablecoin = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
-        address maticTokenAddr = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
+        address stablecoin = DevOpsTools.get_most_recent_deployment("MockStablecoin", block.chainid);
+        address maticTokenAddr = DevOpsTools.get_most_recent_deployment("MockMaticToken", block.chainid);
 
         HelperConfig helperConfig = new HelperConfig();
         (address swapRouter, address lastSwapperDeployed) = helperConfig.activeNetworkConfig();

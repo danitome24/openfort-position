@@ -5,6 +5,7 @@ import {Script, console} from "forge-std/Script.sol";
 import {OpenfortSwapper} from "../src/OpenfortSwapper.sol";
 import {ISwapRouter} from "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import {MockSwapRouter} from "../src/mock/MockSwapRouter.sol";
+import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
 
 contract DeployOpenfortSwapper is Script {
     uint256 private constant INITIAL_FEE = 30; // 30%
@@ -12,7 +13,7 @@ contract DeployOpenfortSwapper is Script {
     function run() public {
         address[] memory initialRecipients = new address[](0);
 
-        address stablecoin = 0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82;
+        address stablecoin = DevOpsTools.get_most_recent_deployment("MockStablecoin", block.chainid);
 
         vm.startBroadcast();
         ISwapRouter swapRouter = new MockSwapRouter();

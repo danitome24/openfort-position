@@ -19,7 +19,9 @@ contract OpenfortSwapperTest is Test {
         address[] memory initialRecipients = new address[](1);
         initialRecipients[0] = USER_ONE;
         ISwapRouter swapRouter = new MockSwapRouter();
-        swapper = new OpenfortSwapper(initialRecipients, OpenfortSwapper.ShippingTime.Immediatly, INIT_FEES, swapRouter, STABLECOIN);
+        swapper = new OpenfortSwapper(
+            initialRecipients, OpenfortSwapper.ShippingTime.Immediatly, INIT_FEES, swapRouter, STABLECOIN
+        );
     }
 
     function testCanSetInitialParameters() public view {

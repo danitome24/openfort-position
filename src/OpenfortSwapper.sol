@@ -15,7 +15,6 @@ contract OpenfortSwapper {
     ISwapRouter public immutable i_swapRouter;
     address immutable i_stablecoin;
 
-    address constant USDC_TOKEN = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
     uint24 constant POOL_FEE = 3000;
 
     enum ShippingTime {
@@ -24,7 +23,13 @@ contract OpenfortSwapper {
         OnceAWeek
     }
 
-    constructor(address[] memory recipients, ShippingTime shippingTime, uint256 fee, ISwapRouter router, address stablecoin) {
+    constructor(
+        address[] memory recipients,
+        ShippingTime shippingTime,
+        uint256 fee,
+        ISwapRouter router,
+        address stablecoin
+    ) {
         s_recipients = recipients;
         s_shippingTime = shippingTime;
         s_fee = fee;
@@ -43,7 +48,7 @@ contract OpenfortSwapper {
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
             tokenIn: tokenAddress,
-            tokenOut: USDC_TOKEN,
+            tokenOut: i_stablecoin,
             fee: POOL_FEE,
             recipient: to,
             deadline: block.timestamp,
