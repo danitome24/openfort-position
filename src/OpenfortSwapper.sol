@@ -39,25 +39,46 @@ contract OpenfortSwapper {
 
     function swap(IERC20 token, uint256 amount) external {
         address from = msg.sender;
-        address to = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
 
         address tokenAddress = address(token);
 
         TransferHelper.safeTransferFrom(tokenAddress, from, address(this), amount);
         TransferHelper.safeApprove(tokenAddress, address(i_swapRouter), amount);
 
+        swapToStableAndSend(tokenAddress, amount);
+    }
+
+    function swapToStableAndSend(address token, uint256 amount) private {
+        uint256 amountOut = swapToStable(token, amount);
+        sendStableToRecipients(amountOut);
+    }
+
+    function swapToStable(address token, uint256 amount) private returns (uint256) {
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
-            tokenIn: tokenAddress,
+            tokenIn: token,
             tokenOut: i_stablecoin,
             fee: POOL_FEE,
-            recipient: to,
+            recipient: address(this),
             deadline: block.timestamp,
             amountIn: amount,
             amountOutMinimum: 0,
             sqrtPriceLimitX96: 0
         });
 
-        i_swapRouter.exactInputSingle(params);
+        uint256 amountOut = i_swapRouter.exactInputSingle(params);
+
+        return amountOut;
+    }
+
+    function sendStableToRecipients(uint256 amountOut) private {
+        address[] memory recipients = s_recipients;
+        uint256 recipientsLength = recipients.length;
+
+        uint256 amountOutPerRecipient = amountOut / recipientsLength;
+        for (uint256 i = 0; i < recipientsLength; i++) {
+            IERC20(i_stablecoin).transfer(recipients[i], amountOutPerRecipient);
+            console.log("Sending %s USDC to recipient %s", amountOutPerRecipient, recipients[i]);
+        }
     }
 
     function setFee(uint256 newFee) external {

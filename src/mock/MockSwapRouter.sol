@@ -23,7 +23,7 @@ contract MockSwapRouter is ISwapRouter {
         // Se "transfieren" tokens al destinatario
         IERC20(params.tokenOut).transfer(params.recipient, amountOut);
 
-        return 0;
+        return amountOut;
     }
 
     function exactOutputSingle(ExactOutputSingleParams calldata params)

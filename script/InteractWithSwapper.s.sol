@@ -14,6 +14,7 @@ contract InteractWithSwapper is Script {
     function run() external {
         address from = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
         address to = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
+        uint256 amountToSend = 2;
         address stablecoin = DevOpsTools.get_most_recent_deployment("MockStablecoin", block.chainid);
         address maticTokenAddr = DevOpsTools.get_most_recent_deployment("MockMaticToken", block.chainid);
 
@@ -27,18 +28,16 @@ contract InteractWithSwapper is Script {
         IERC20 maticToken = MockMaticToken(maticTokenAddr);
 
         console.log("Before: Sender MATIC balance %s", maticToken.balanceOf(from));
-        console.log("Before: Receiver USDC balance: %s", usdcToken.balanceOf(to));
         console.log("Before: Swapper USDC balance: %s", usdcToken.balanceOf(swapRouter));
 
         vm.startBroadcast();
-        maticToken.approve(lastSwapperDeployed, 1);
-        maticToken.approve(swapRouter, 1);
+        maticToken.approve(lastSwapperDeployed, amountToSend);
+        maticToken.approve(swapRouter, amountToSend);
         OpenfortSwapper swapper = OpenfortSwapper(lastSwapperDeployed);
-        swapper.swap(maticToken, 1);
+        swapper.swap(maticToken, amountToSend);
         vm.stopBroadcast();
 
         console.log("After: Sender MATIC balance %s", maticToken.balanceOf(from));
-        console.log("After: Receiver USDC balance: %s", usdcToken.balanceOf(to));
         console.log("After: Swapper USDC balance: %s", usdcToken.balanceOf(swapRouter));
     }
 }
