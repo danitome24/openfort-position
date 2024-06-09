@@ -11,10 +11,10 @@ import {HelperConfig} from "./HelperConfig.s.sol";
 import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
 
 contract InteractWithSwapper is Script {
+    uint256 constant AMOUNT_TO_SEND = 2;
+
     function run() external {
         address from = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
-        address to = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
-        uint256 amountToSend = 2;
         address stablecoin = DevOpsTools.get_most_recent_deployment("MockStablecoin", block.chainid);
         address maticTokenAddr = DevOpsTools.get_most_recent_deployment("MockMaticToken", block.chainid);
 
@@ -31,10 +31,10 @@ contract InteractWithSwapper is Script {
         console.log("Before: Swapper USDC balance: %s", usdcToken.balanceOf(swapRouter));
 
         vm.startBroadcast();
-        maticToken.approve(lastSwapperDeployed, amountToSend);
-        maticToken.approve(swapRouter, amountToSend);
+        maticToken.approve(lastSwapperDeployed, AMOUNT_TO_SEND);
+        maticToken.approve(swapRouter, AMOUNT_TO_SEND);
         OpenfortSwapper swapper = OpenfortSwapper(lastSwapperDeployed);
-        swapper.swap(maticToken, amountToSend);
+        swapper.swap(maticToken, AMOUNT_TO_SEND);
         vm.stopBroadcast();
 
         console.log("After: Sender MATIC balance %s", maticToken.balanceOf(from));
