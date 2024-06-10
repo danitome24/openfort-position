@@ -6,9 +6,9 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ISwapRouter} from "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import {TransferHelper} from "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import {HelperConfig} from "../script/HelperConfig.s.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
-contract OpenfortSwapper {
-
+contract OpenfortSwapper is Ownable {
     event StablecoinSendedToRecipient(address indexed to, uint256 amount);
 
     address[] s_recipients;
@@ -32,7 +32,7 @@ contract OpenfortSwapper {
         uint256 fee,
         ISwapRouter router,
         address stablecoin
-    ) {
+    ) Ownable(msg.sender) {
         s_recipients = recipients;
         s_shippingTime = shippingTime;
         s_fee = fee;
@@ -84,7 +84,7 @@ contract OpenfortSwapper {
         }
     }
 
-    function setFee(uint256 newFee) external {
+    function setFee(uint256 newFee) external onlyOwner {
         s_fee = newFee;
     }
 
@@ -92,7 +92,7 @@ contract OpenfortSwapper {
         return s_fee;
     }
 
-    function setShippingTime(ShippingTime newTiming) external {
+    function setShippingTime(ShippingTime newTiming) external onlyOwner {
         s_shippingTime = newTiming;
     }
 
@@ -100,7 +100,7 @@ contract OpenfortSwapper {
         return s_shippingTime;
     }
 
-    function setRecipients(address[] memory _recipients) external {
+    function setRecipients(address[] memory _recipients) external onlyOwner {
         s_recipients = _recipients;
     }
 

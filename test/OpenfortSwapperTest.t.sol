@@ -83,4 +83,19 @@ contract OpenfortSwapperTest is Test {
         assertEq(stablecoin.balanceOf(USER_ONE), amountOutPerRecipient);
         assertEq(stablecoin.balanceOf(USER_TWO), amountOutPerRecipient);
     }
+
+    function testOnlyOwnerCanModifyParameters() public {
+        address[] memory recipients = new address[](1);
+        recipients[0] = USER_TWO;
+        uint256 newFee = 1;
+
+        vm.startPrank(USER_ONE);
+        vm.expectRevert();
+        swapper.setRecipients(recipients);
+        vm.expectRevert();
+        swapper.setFee(newFee);
+        vm.expectRevert();
+        swapper.setShippingTime(OpenfortSwapper.ShippingTime.OnceADay);
+        vm.stopPrank();
+    }
 }

@@ -25,10 +25,10 @@ contract InteractWithSwapper is Script {
         address swapRouter = DevOpsTools.get_most_recent_deployment("MockSwapRouter", block.chainid);
         address lastSwapperDeployed = DevOpsTools.get_most_recent_deployment("OpenfortSwapper", block.chainid);
 
-        console.log("STablecoin %s", stablecoin);
-        console.log("Matic %s", maticTokenAddr);
-        console.log("SwapRouter contract address: %s", swapRouter);
-        console.log("OpenfortSwap contract address: %s", lastSwapperDeployed);
+        //console.log("STablecoin %s", stablecoin);
+        //console.log("Matic %s", maticTokenAddr);
+        //console.log("SwapRouter contract address: %s", swapRouter);
+        //console.log("OpenfortSwap contract address: %s", lastSwapperDeployed);
 
         IERC20 usdcToken = MockStablecoin(stablecoin);
         IERC20 maticToken = MockMaticToken(maticTokenAddr);
@@ -40,11 +40,11 @@ contract InteractWithSwapper is Script {
         maticToken.approve(lastSwapperDeployed, AMOUNT_TO_SEND);
         maticToken.approve(swapRouter, AMOUNT_TO_SEND);
 
-        OpenfortSwapper swapper = OpenfortSwapper(lastSwapperDeployed);
+        OpenfortSwapper swapper = OpenfortSwapper(payable(lastSwapperDeployed));
         swapper.setRecipients(recipients);
         swapper.swap(maticToken, AMOUNT_TO_SEND);
         vm.stopBroadcast();
-
+        console.log("Owner is %s", swapper.owner());
         console.log("After: Sender MATIC balance %s", maticToken.balanceOf(from));
         console.log("After: Swapper USDC balance: %s", usdcToken.balanceOf(swapRouter));
     }
