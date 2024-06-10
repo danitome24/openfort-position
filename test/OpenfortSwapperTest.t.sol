@@ -10,10 +10,11 @@ import {MockMaticToken} from "../src/mock/MockMaticToken.sol";
 import {MockStablecoin} from "../src/mock/MockStablecoin.sol";
 
 contract OpenfortSwapperTest is Test {
-    uint256 private constant INIT_FEES = 10; // 10%
+    uint256 private constant INIT_FEES = 10; // 1%
     OpenfortSwapper swapper;
     ISwapRouter swapRouter;
     MockStablecoin stablecoin;
+    // TODO: Owner tiene q ser el creador del contrato, no el que hace swap
     address OWNER = makeAddr("owner");
     address USER_ONE = makeAddr("user1");
     address USER_TWO = makeAddr("user2");
@@ -56,7 +57,8 @@ contract OpenfortSwapperTest is Test {
 
     function testSwap() public {
         // Prepare
-        uint256 amountIn = 6;
+        uint256 amountIn = 60;
+        uint256 fee = 100; // 10%
         MockMaticToken erc20Token = new MockMaticToken();
         erc20Token.mint(OWNER, amountIn);
 
@@ -64,24 +66,24 @@ contract OpenfortSwapperTest is Test {
         recipients[0] = USER_ONE;
         recipients[1] = USER_TWO;
         swapper.setRecipients(recipients);
-
-        uint256 amountOutPerRecipient = amountIn / recipients.length;
+        swapper.setFee(fee);
 
         vm.prank(OWNER);
         erc20Token.approve(address(swapRouter), amountIn);
         vm.prank(OWNER);
         erc20Token.approve(address(swapper), amountIn);
 
+        uint256 expectedAmountPerRecipient = 27;
         vm.expectEmit(true, true, false, true);
-        emit StablecoinSendedToRecipient(recipients[0], amountOutPerRecipient);
+        emit StablecoinSendedToRecipient(recipients[0], expectedAmountPerRecipient);
         vm.expectEmit(true, true, false, true);
-        emit StablecoinSendedToRecipient(recipients[1], amountOutPerRecipient);
+        emit StablecoinSendedToRecipient(recipients[1], expectedAmountPerRecipient);
 
         vm.prank(OWNER);
         swapper.swap(erc20Token, amountIn);
 
-        assertEq(stablecoin.balanceOf(USER_ONE), amountOutPerRecipient);
-        assertEq(stablecoin.balanceOf(USER_TWO), amountOutPerRecipient);
+        assertEq(stablecoin.balanceOf(USER_ONE), expectedAmountPerRecipient);
+        assertEq(stablecoin.balanceOf(USER_TWO), expectedAmountPerRecipient);
     }
 
     function testOnlyOwnerCanModifyParameters() public {

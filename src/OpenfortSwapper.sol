@@ -13,12 +13,13 @@ contract OpenfortSwapper is Ownable {
 
     address[] s_recipients;
     ShippingTime s_shippingTime;
-    uint256 s_fee;
+    uint256 s_fee; // From 1 to 1000, being 1 = 0.1% and 1000 = 100%
 
     ISwapRouter public immutable i_swapRouter;
     address immutable i_stablecoin;
 
     uint24 constant POOL_FEE = 3000;
+    uint256 constant PERCENTAGE_BASE = 1000; // Base 1000.
 
     enum ShippingTime {
         Immediatly,
@@ -42,7 +43,6 @@ contract OpenfortSwapper is Ownable {
 
     function swap(IERC20 token, uint256 amount) external {
         address from = msg.sender;
-
         address tokenAddress = address(token);
 
         TransferHelper.safeTransferFrom(tokenAddress, from, address(this), amount);
@@ -77,7 +77,12 @@ contract OpenfortSwapper is Ownable {
         address[] memory recipients = s_recipients;
         uint256 recipientsLength = recipients.length;
 
-        uint256 amountOutPerRecipient = amountOut / recipientsLength;
+        uint256 fee = (amountOut * s_fee) / PERCENTAGE_BASE;
+        uint256 amountOutAfterFee = amountOut - fee;
+
+        //IERC20(fee).transfer(address(this), fee);
+
+        uint256 amountOutPerRecipient = amountOutAfterFee / recipientsLength;
         for (uint256 i = 0; i < recipientsLength; i++) {
             IERC20(i_stablecoin).transfer(recipients[i], amountOutPerRecipient);
             emit StablecoinSendedToRecipient(recipients[i], amountOutPerRecipient);
