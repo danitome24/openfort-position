@@ -29,24 +29,14 @@ contract HelperConfig is Script {
     function getMainnetEthConfig() private view returns (NetworkConfig memory) {}
 
     function getOrCreateAnvilConfig() private returns (NetworkConfig memory) {
-        address swapRouter;
-        address stablecoin;
+        uint256 initialStablecoinAmountOnSwapRouter = 20;
 
-        if (activeNetworkConfig.swapRouter == address(0)) {
-            vm.broadcast();
-            MockSwapRouter mockSwapRouter = new MockSwapRouter();
-            swapRouter = address(mockSwapRouter);
-        } else {
-            swapRouter = DevOpsTools.get_most_recent_deployment("MockSwapRouter", block.chainid);
-        }
-        if (activeNetworkConfig.stablecoin == address(0)) {
-            vm.broadcast();
-            MockStablecoin mockStablecoin = new MockStablecoin();
-            stablecoin = address(mockStablecoin);
-        } else {
-            stablecoin = DevOpsTools.get_most_recent_deployment("MockStablecoin", block.chainid);
-        }
+        vm.startBroadcast();
+        MockSwapRouter mockSwapRouter = new MockSwapRouter();
+        MockStablecoin mockStablecoin = new MockStablecoin();
+        mockStablecoin.mint(address(mockSwapRouter), initialStablecoinAmountOnSwapRouter);
+        vm.stopBroadcast();
 
-        return NetworkConfig(swapRouter, stablecoin);
+        return NetworkConfig(address(mockSwapRouter), address(mockStablecoin));
     }
 }

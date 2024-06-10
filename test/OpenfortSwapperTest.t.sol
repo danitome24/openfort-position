@@ -31,6 +31,7 @@ contract OpenfortSwapperTest is Test {
     function testCanSetInitialParameters() public view {
         address[] memory expectedRecipients = new address[](1);
         expectedRecipients[0] = USER_ONE;
+
         assertEq(INIT_FEES, swapper.getFee());
         assertEq(uint256(OpenfortSwapper.ShippingTime.Immediatly), uint256(swapper.getShippingTime()));
         assertEq(expectedRecipients, swapper.getRecipients());

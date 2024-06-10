@@ -8,6 +8,9 @@ import {TransferHelper} from "@uniswap/v3-periphery/contracts/libraries/Transfer
 import {HelperConfig} from "../script/HelperConfig.s.sol";
 
 contract OpenfortSwapper {
+
+    event StablecoinSendedToRecipient(address indexed to, uint256 amount);
+
     address[] s_recipients;
     ShippingTime s_shippingTime;
     uint256 s_fee;
@@ -77,7 +80,7 @@ contract OpenfortSwapper {
         uint256 amountOutPerRecipient = amountOut / recipientsLength;
         for (uint256 i = 0; i < recipientsLength; i++) {
             IERC20(i_stablecoin).transfer(recipients[i], amountOutPerRecipient);
-            console.log("Sending %s USDC to recipient %s", amountOutPerRecipient, recipients[i]);
+            emit StablecoinSendedToRecipient(recipients[i], amountOutPerRecipient);
         }
     }
 
