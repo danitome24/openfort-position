@@ -24,13 +24,14 @@ contract OpenfortSwapperTest is Test {
     event StablecoinSendedToRecipient(address indexed to, uint256 amount);
 
     function setUp() external {
+        uint256 initialSwapRouterStablecoinBalance = 100 * 1e18; // 100 USDC.
         address[] memory initialRecipients = new address[](1);
         initialRecipients[0] = RECIPIENT_ONE;
 
         vm.startPrank(OWNER);
         stablecoin = new MockStablecoin();
         swapRouter = new MockSwapRouter();
-        stablecoin.mint(address(swapRouter), 100);
+        stablecoin.mint(address(swapRouter), initialSwapRouterStablecoinBalance);
         swapper = new OpenfortSwapper(
             initialRecipients, OpenfortSwapper.ShippingTime.Immediatly, INIT_FEES, swapRouter, address(stablecoin)
         );
@@ -49,23 +50,24 @@ contract OpenfortSwapperTest is Test {
     function testOwnerCanChangeInitialParameters() public {
         address[] memory expectedRecipients = new address[](1);
         expectedRecipients[0] = RECIPIENT_TWO;
-        uint256 expectedFee = 20;
+        uint256 expectedFeePercentage = 20; // 2%.
 
         vm.startPrank(OWNER);
         swapper.setShippingTime(OpenfortSwapper.ShippingTime.OnceADay);
         swapper.setRecipients(expectedRecipients);
-        swapper.setFee(expectedFee);
+        swapper.setFee(expectedFeePercentage);
         vm.stopPrank();
 
         assertEq(uint256(OpenfortSwapper.ShippingTime.OnceADay), uint256(swapper.getShippingTime()));
         assertEq(expectedRecipients, swapper.getRecipients());
-        assertEq(expectedFee, swapper.getFee());
+        assertEq(expectedFeePercentage, swapper.getFee());
     }
 
     function testRecipientsGetStablecoinAferSwap() public {
         // Prepare
-        uint256 amountIn = 60;
+        uint256 amountIn = 60 * 1e18; // 60 MockMaticToken
         uint256 fee = 100; // 10%
+        uint256 expectedAmountPerRecipient = 27 * 1e18;
         MockMaticToken erc20Token = new MockMaticToken();
         erc20Token.mint(WHO_SWAPS, amountIn);
 
@@ -83,7 +85,6 @@ contract OpenfortSwapperTest is Test {
         erc20Token.approve(address(swapper), amountIn);
         vm.stopPrank();
 
-        uint256 expectedAmountPerRecipient = 27;
         vm.expectEmit(true, true, false, true);
         emit StablecoinSendedToRecipient(recipients[0], expectedAmountPerRecipient);
         vm.expectEmit(true, true, false, true);
@@ -98,8 +99,9 @@ contract OpenfortSwapperTest is Test {
 
     function testFeeOnSwap() public {
         // Prepare
-        uint256 amountIn = 60;
-        uint256 fee = 100; // 10%
+        uint256 amountIn = 60 * 1e18; // 60 MockMaticToken
+        uint256 feePercentage = 100; // 10%
+        uint256 expectedAmountFee = 6 * 1e18;
         MockMaticToken erc20Token = new MockMaticToken();
         erc20Token.mint(WHO_SWAPS, amountIn);
 
@@ -109,7 +111,7 @@ contract OpenfortSwapperTest is Test {
 
         vm.startPrank(OWNER);
         swapper.setRecipients(recipients);
-        swapper.setFee(fee);
+        swapper.setFee(feePercentage);
         vm.stopPrank();
 
         vm.startPrank(WHO_SWAPS);
@@ -117,7 +119,6 @@ contract OpenfortSwapperTest is Test {
         erc20Token.approve(address(swapper), amountIn);
         vm.stopPrank();
 
-        uint256 expectedAmountFee = 6;
         vm.expectEmit(true, true, false, true);
         emit StablecoinSendedToRecipient(OWNER, expectedAmountFee);
 
@@ -130,7 +131,7 @@ contract OpenfortSwapperTest is Test {
     function testOnlyOwnerCanModifyParameters() public {
         address[] memory recipients = new address[](1);
         recipients[0] = RECIPIENT_TWO;
-        uint256 newFee = 1;
+        uint256 newFee = 1; // 0,1%
 
         vm.startPrank(RECIPIENT_ONE);
         vm.expectRevert();
@@ -143,7 +144,7 @@ contract OpenfortSwapperTest is Test {
     }
 
     function testErc20TokenAddressCannotBeZero() public {
-        uint256 amountIn = 60;
+        uint256 amountIn = 60 * 1e18;
         IERC20 erc20Token = IERC20(address(0));
 
         vm.prank(WHO_SWAPS);
@@ -161,8 +162,10 @@ contract OpenfortSwapperTest is Test {
     }
 
     function testNewFeeMustBeBase1000() public {
+        uint256 feePercentage = 2000; // 200%.
+
         vm.prank(OWNER);
         vm.expectRevert("Fee must be lower than 1000");
-        swapper.setFee(2000);
+        swapper.setFee(feePercentage);
     }
 }

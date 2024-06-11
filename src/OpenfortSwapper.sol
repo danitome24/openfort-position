@@ -41,6 +41,10 @@ contract OpenfortSwapper is Ownable {
         i_stablecoin = stablecoin;
     }
 
+    /**
+     * @param token ERC20 token to swap from
+     * @param amount Must be defined in WEI (1e18)
+     */
     function swap(IERC20 token, uint256 amount) external {
         require(address(token) != address(0), "ERC20 Token address not valid");
         require(amount > 0, "Amount to swap must be > than 0");
