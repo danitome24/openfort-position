@@ -159,4 +159,10 @@ contract OpenfortSwapperTest is Test {
         vm.expectRevert("Amount to swap must be > than 0");
         swapper.swap(erc20Token, amountIn);
     }
+
+    function testNewFeeMustBeBase1000() public {
+        vm.prank(OWNER);
+        vm.expectRevert("Fee must be lower than 1000");
+        swapper.setFee(2000);
+    }
 }

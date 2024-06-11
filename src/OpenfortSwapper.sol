@@ -94,6 +94,8 @@ contract OpenfortSwapper is Ownable {
     }
 
     function setFee(uint256 newFee) external onlyOwner {
+        require(newFee <= 1000, "Fee must be lower than 1000");
+
         s_fee = newFee;
     }
 
