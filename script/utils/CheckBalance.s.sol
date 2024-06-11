@@ -3,7 +3,7 @@ pragma solidity 0.8.26;
 
 import {Script, console} from "forge-std/Script.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {MockMaticToken} from "../src/mock/MockMaticToken.sol";
+import {MockMaticToken} from "../../src/mock/MockMaticToken.sol";
 import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
 
 contract CheckBalance is Script {

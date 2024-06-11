@@ -2,8 +2,8 @@
 pragma solidity 0.8.26;
 
 import {Script, console} from "forge-std/Script.sol";
-import {MockStablecoin} from "../src/mock/MockStablecoin.sol";
-import {MockMaticToken} from "../src/mock/MockMaticToken.sol";
+import {MockStablecoin} from "../../src/mock/MockStablecoin.sol";
+import {MockMaticToken} from "../../src/mock/MockMaticToken.sol";
 
 contract DeployFakeTokens is Script {
     function run() external {

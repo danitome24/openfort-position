@@ -43,20 +43,20 @@ deploy-anvil: deploy-tokens deploy-swapper mint-erc20-token
 
 .PHONY: deploy-swapper
 deploy-swapper:
-	@forge script script/DeployOpenfortSwapper.s.sol:DeployOpenfortSwapper $(NETWORK_ARGS)
-	@forge script script/MintTokens.s.sol:MintStableTokens $(NETWORK_ARGS)
+	@forge script script/utils/DeployOpenfortSwapper.s.sol:DeployOpenfortSwapper $(NETWORK_ARGS)
+	@forge script script/utils/MintTokens.s.sol:MintStableTokens $(NETWORK_ARGS)
 
 .PHONY: deploy-tokens
 deploy-tokens:
-	@forge script script/DeployFakeTokens.s.sol:DeployFakeTokens $(NETWORK_ARGS)
+	@forge script script/utils/DeployFakeTokens.s.sol:DeployFakeTokens $(NETWORK_ARGS)
 
 .PHONY: mint-erc20-token
 mint-erc20-token:
-	@forge script script/MintTokens.s.sol:MintERC20Tokens $(NETWORK_ARGS)
+	@forge script script/utils/MintTokens.s.sol:MintERC20Tokens $(NETWORK_ARGS)
 
 .PHONY: check-balance
 check-balance:
-	@forge script script/CheckBalance.s.sol:CheckBalance $(NETWORK_ARGS)
+	@forge script script/utils/CheckBalance.s.sol:CheckBalance $(NETWORK_ARGS)
 
 SENDER_ADDRESS := 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 .PHONY:
