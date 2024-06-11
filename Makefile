@@ -21,7 +21,8 @@ clean  :; forge clean
 remove :; rm -rf .gitmodules && rm -rf .git/modules/* && rm -rf lib && touch .gitmodules && git add . && git commit -m "modules"
 
 .PHONY: install
-install :; forge install OpenZeppelin/openzeppelin-contracts@v5.0.2 --no-commit && forge install @uniswap/v3-periphery --no-commit && forge install @uniswap/v3-core --no-commit && forge install Cyfrin/foundry-devops --no-commit@v0.2.2 --no-commit
+install : clean remove
+	@forge install OpenZeppelin/openzeppelin-contracts@v5.0.2 --no-commit && forge install Uniswap/v3-periphery --no-commit && forge install Uniswap/v3-core --no-commit && forge install Cyfrin/foundry-devops@0.2.2 --no-commit && forge install foundry-rs/forge-std@v1.8.2 --no-commit
 
 .PHONY: build
 build:; forge build
@@ -69,7 +70,7 @@ mint-erc20-token:
 check-balance:
 	@forge script script/utils/CheckBalance.s.sol:CheckBalance $(NETWORK_ARGS)
 
-SENDER_ADDRESS := 0xaa4C60b784E2b3E485035399bF1b1aBDeD66A60f
+SENDER_ADDRESS := 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 .PHONY:
 swap:
 	forge script script/InteractWithSwapper.s.sol:InteractWithSwapper --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)

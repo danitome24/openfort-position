@@ -19,14 +19,41 @@ There are some features that I had no time to implement but I want to type what 
 
 * Pausable: I've seen that there's a [Pausable library](https://docs.openzeppelin.com/contracts/5.x/api/utils#Pausable) from Openzeppelin to stop if needed the Smart Contract. So I would have used this library. Just extends this and use modifiers in functions.
 
+## Install
+
+```
+$ make install
+```
+
+This will install all git modules needed.
+
 ## Usage
 
-There is a Makefile with most common commands to be used in project. These are helpful for development and testing stages. You can open it and use it. An example how to use it:
+There is a Makefile with most common commands to be used in project. These are helpful for development and testing stages. You can open it and use it. To start running this just follow this steps:
+
+1. Copy `.env.example` to `.env` and replace placeholder data for real data.
+2. Run `make anvil` to start development environment.
+3. Run `make deploy-anvil` to deploy all contracts.
+5. Run `make swap` to run a swap.
+
+Then you can see output like:
 
 ```
-$ make deploy-anvil
-$ make swap
+== Logs ==
+  USDC Token add: 0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E
+  MATIC Token add: 0x09635F643e140090A9A8Dcd712eD6285858ceBef
+  Swapper is 0x67d269191c92Caf3cD7723F116c85e6E9bf55933
+  Openfortswapper is 0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690
+
+  Before: Sender MATIC balance 20000000000000000000
+  Before: Recipient 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 USDC balance: 0
+  Before: Recipient 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC USDC balance: 0
+  After: Sender MATIC balance 18000000000000000000
+  After: Recipient 0 USDC balance: 970000000000000000
+  After: Recipient 1 USDC balance: 970000000000000000
 ```
+
+First of all there's all deployed contract addresses. Then initial balances from sender and recipients and finally all balances after swap.
 
 ### Deploy
 

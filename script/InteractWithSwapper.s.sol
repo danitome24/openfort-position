@@ -37,7 +37,6 @@ contract InteractWithSwapper is Script {
         for (uint256 i = 0; i < recipients.length; i++) {
             console.log("Before: Recipient %s USDC balance: %s", recipients[i], usdcToken.balanceOf(recipients[i]));
         }
-        console.log("Before %s", usdcToken.balanceOf(swapRouter));
         vm.startBroadcast();
         maticToken.approve(openfortSwapper, AMOUNT_TO_SEND);
         maticToken.approve(swapRouter, AMOUNT_TO_SEND);
