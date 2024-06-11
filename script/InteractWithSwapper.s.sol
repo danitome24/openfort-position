@@ -11,7 +11,7 @@ import {HelperConfig} from "./HelperConfig.s.sol";
 import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
 
 contract InteractWithSwapper is Script {
-    uint256 constant AMOUNT_TO_SEND = 2 * 1e18;
+    uint256 constant AMOUNT_TO_SEND = 2 * 1e18; // 2 MATIC
 
     function run() external {
         address from = msg.sender;

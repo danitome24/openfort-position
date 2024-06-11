@@ -23,21 +23,11 @@ remove :; rm -rf .gitmodules && rm -rf .git/modules/* && rm -rf lib && touch .gi
 .PHONY: install
 install :; forge install OpenZeppelin/openzeppelin-contracts@v5.0.2 --no-commit && forge install @uniswap/v3-periphery --no-commit && forge install @uniswap/v3-core --no-commit && forge install Cyfrin/foundry-devops --no-commit@v0.2.2 --no-commit
 
-# Update Dependencies
-.PHONY: update
-update:; forge update
-
 .PHONY: build
 build:; forge build
 
 .PHONY: test
 test :; forge test
-
-.PHONY: snapshot
-snapshot :; forge snapshot
-
-.PHONY: format
-format :; forge fmt
 
 .PHONY: anvil
 anvil :; anvil -m 'test test test test test test test test test test test junk' --steps-tracing 
