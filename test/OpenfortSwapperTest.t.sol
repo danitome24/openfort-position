@@ -17,15 +17,15 @@ contract OpenfortSwapperTest is Test {
 
     address OWNER = makeAddr("owner");
     address WHO_SWAPS = makeAddr("userSwapper");
-    address WHO_RECIEVES_ONE = makeAddr("userReceiver1");
-    address WHO_RECIEVES_TWO = makeAddr("userReceiver2");
-    address WHO_RECIEVES_THREE = makeAddr("userReceiver3");
+    address RECIPIENT_ONE = makeAddr("userReceiver1");
+    address RECIPIENT_TWO = makeAddr("userReceiver2");
+    address RECIPIENT_THREE = makeAddr("userReceiver3");
 
     event StablecoinSendedToRecipient(address indexed to, uint256 amount);
 
     function setUp() external {
         address[] memory initialRecipients = new address[](1);
-        initialRecipients[0] = WHO_RECIEVES_ONE;
+        initialRecipients[0] = RECIPIENT_ONE;
 
         vm.startPrank(OWNER);
         stablecoin = new MockStablecoin();
@@ -39,7 +39,7 @@ contract OpenfortSwapperTest is Test {
 
     function testCanSetInitialParameters() public view {
         address[] memory expectedRecipients = new address[](1);
-        expectedRecipients[0] = WHO_RECIEVES_ONE;
+        expectedRecipients[0] = RECIPIENT_ONE;
 
         assertEq(INIT_FEES, swapper.getFee());
         assertEq(uint256(OpenfortSwapper.ShippingTime.Immediatly), uint256(swapper.getShippingTime()));
@@ -48,7 +48,7 @@ contract OpenfortSwapperTest is Test {
 
     function testOwnerCanChangeInitialParameters() public {
         address[] memory expectedRecipients = new address[](1);
-        expectedRecipients[0] = WHO_RECIEVES_TWO;
+        expectedRecipients[0] = RECIPIENT_TWO;
         uint256 expectedFee = 20;
 
         vm.startPrank(OWNER);
@@ -62,7 +62,7 @@ contract OpenfortSwapperTest is Test {
         assertEq(expectedFee, swapper.getFee());
     }
 
-    function testSwap() public {
+    function testRecipientsGetStablecoinAferSwap() public {
         // Prepare
         uint256 amountIn = 60;
         uint256 fee = 100; // 10%
@@ -70,8 +70,8 @@ contract OpenfortSwapperTest is Test {
         erc20Token.mint(WHO_SWAPS, amountIn);
 
         address[] memory recipients = new address[](2);
-        recipients[0] = WHO_RECIEVES_ONE;
-        recipients[1] = WHO_RECIEVES_TWO;
+        recipients[0] = RECIPIENT_ONE;
+        recipients[1] = RECIPIENT_TWO;
 
         vm.startPrank(OWNER);
         swapper.setRecipients(recipients);
@@ -92,16 +92,45 @@ contract OpenfortSwapperTest is Test {
         vm.prank(WHO_SWAPS);
         swapper.swap(erc20Token, amountIn);
 
-        assertEq(stablecoin.balanceOf(WHO_RECIEVES_ONE), expectedAmountPerRecipient);
-        assertEq(stablecoin.balanceOf(WHO_RECIEVES_TWO), expectedAmountPerRecipient);
+        assertEq(stablecoin.balanceOf(RECIPIENT_ONE), expectedAmountPerRecipient);
+        assertEq(stablecoin.balanceOf(RECIPIENT_TWO), expectedAmountPerRecipient);
+    }
+
+    function testFeeOnSwap() public {
+        // Prepare
+        uint256 amountIn = 60;
+        uint256 fee = 100; // 10%
+        MockMaticToken erc20Token = new MockMaticToken();
+        erc20Token.mint(WHO_SWAPS, amountIn);
+
+        address[] memory recipients = new address[](2);
+        recipients[0] = RECIPIENT_ONE;
+        recipients[1] = RECIPIENT_TWO;
+
+        vm.startPrank(OWNER);
+        swapper.setRecipients(recipients);
+        swapper.setFee(fee);
+        vm.stopPrank();
+
+        vm.startPrank(WHO_SWAPS);
+        erc20Token.approve(address(swapRouter), amountIn);
+        erc20Token.approve(address(swapper), amountIn);
+        vm.stopPrank();
+
+        uint256 expectedAmountFee = 6;
+
+        vm.prank(WHO_SWAPS);
+        swapper.swap(erc20Token, amountIn);
+
+        assertEq(stablecoin.balanceOf(OWNER), expectedAmountFee);
     }
 
     function testOnlyOwnerCanModifyParameters() public {
         address[] memory recipients = new address[](1);
-        recipients[0] = WHO_RECIEVES_TWO;
+        recipients[0] = RECIPIENT_TWO;
         uint256 newFee = 1;
 
-        vm.startPrank(WHO_RECIEVES_ONE);
+        vm.startPrank(RECIPIENT_ONE);
         vm.expectRevert();
         swapper.setRecipients(recipients);
         vm.expectRevert();

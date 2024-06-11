@@ -80,7 +80,7 @@ contract OpenfortSwapper is Ownable {
         uint256 fee = (amountOut * s_fee) / PERCENTAGE_BASE;
         uint256 amountOutAfterFee = amountOut - fee;
 
-        //IERC20(fee).transfer(address(this), fee);
+        IERC20(i_stablecoin).transfer(owner(), fee);
 
         uint256 amountOutPerRecipient = amountOutAfterFee / recipientsLength;
         for (uint256 i = 0; i < recipientsLength; i++) {
