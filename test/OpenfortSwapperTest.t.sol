@@ -14,41 +14,48 @@ contract OpenfortSwapperTest is Test {
     OpenfortSwapper swapper;
     ISwapRouter swapRouter;
     MockStablecoin stablecoin;
-    // TODO: Owner tiene q ser el creador del contrato, no el que hace swap
+
     address OWNER = makeAddr("owner");
-    address USER_ONE = makeAddr("user1");
-    address USER_TWO = makeAddr("user2");
+    address WHO_SWAPS = makeAddr("userSwapper");
+    address WHO_RECIEVES_ONE = makeAddr("userReceiver1");
+    address WHO_RECIEVES_TWO = makeAddr("userReceiver2");
+    address WHO_RECIEVES_THREE = makeAddr("userReceiver3");
 
     event StablecoinSendedToRecipient(address indexed to, uint256 amount);
 
     function setUp() external {
         address[] memory initialRecipients = new address[](1);
-        initialRecipients[0] = USER_ONE;
-        stablecoin = new MockStablecoin();
+        initialRecipients[0] = WHO_RECIEVES_ONE;
 
+        vm.startPrank(OWNER);
+        stablecoin = new MockStablecoin();
         swapRouter = new MockSwapRouter();
         stablecoin.mint(address(swapRouter), 100);
         swapper = new OpenfortSwapper(
             initialRecipients, OpenfortSwapper.ShippingTime.Immediatly, INIT_FEES, swapRouter, address(stablecoin)
         );
+        vm.stopPrank();
     }
 
     function testCanSetInitialParameters() public view {
         address[] memory expectedRecipients = new address[](1);
-        expectedRecipients[0] = USER_ONE;
+        expectedRecipients[0] = WHO_RECIEVES_ONE;
 
         assertEq(INIT_FEES, swapper.getFee());
         assertEq(uint256(OpenfortSwapper.ShippingTime.Immediatly), uint256(swapper.getShippingTime()));
         assertEq(expectedRecipients, swapper.getRecipients());
     }
 
-    function testCanChangeInitialParameters() public {
+    function testOwnerCanChangeInitialParameters() public {
         address[] memory expectedRecipients = new address[](1);
-        expectedRecipients[0] = USER_TWO;
+        expectedRecipients[0] = WHO_RECIEVES_TWO;
         uint256 expectedFee = 20;
+
+        vm.startPrank(OWNER);
         swapper.setShippingTime(OpenfortSwapper.ShippingTime.OnceADay);
         swapper.setRecipients(expectedRecipients);
         swapper.setFee(expectedFee);
+        vm.stopPrank();
 
         assertEq(uint256(OpenfortSwapper.ShippingTime.OnceADay), uint256(swapper.getShippingTime()));
         assertEq(expectedRecipients, swapper.getRecipients());
@@ -60,18 +67,21 @@ contract OpenfortSwapperTest is Test {
         uint256 amountIn = 60;
         uint256 fee = 100; // 10%
         MockMaticToken erc20Token = new MockMaticToken();
-        erc20Token.mint(OWNER, amountIn);
+        erc20Token.mint(WHO_SWAPS, amountIn);
 
         address[] memory recipients = new address[](2);
-        recipients[0] = USER_ONE;
-        recipients[1] = USER_TWO;
+        recipients[0] = WHO_RECIEVES_ONE;
+        recipients[1] = WHO_RECIEVES_TWO;
+
+        vm.startPrank(OWNER);
         swapper.setRecipients(recipients);
         swapper.setFee(fee);
+        vm.stopPrank();
 
-        vm.prank(OWNER);
+        vm.startPrank(WHO_SWAPS);
         erc20Token.approve(address(swapRouter), amountIn);
-        vm.prank(OWNER);
         erc20Token.approve(address(swapper), amountIn);
+        vm.stopPrank();
 
         uint256 expectedAmountPerRecipient = 27;
         vm.expectEmit(true, true, false, true);
@@ -79,19 +89,19 @@ contract OpenfortSwapperTest is Test {
         vm.expectEmit(true, true, false, true);
         emit StablecoinSendedToRecipient(recipients[1], expectedAmountPerRecipient);
 
-        vm.prank(OWNER);
+        vm.prank(WHO_SWAPS);
         swapper.swap(erc20Token, amountIn);
 
-        assertEq(stablecoin.balanceOf(USER_ONE), expectedAmountPerRecipient);
-        assertEq(stablecoin.balanceOf(USER_TWO), expectedAmountPerRecipient);
+        assertEq(stablecoin.balanceOf(WHO_RECIEVES_ONE), expectedAmountPerRecipient);
+        assertEq(stablecoin.balanceOf(WHO_RECIEVES_TWO), expectedAmountPerRecipient);
     }
 
     function testOnlyOwnerCanModifyParameters() public {
         address[] memory recipients = new address[](1);
-        recipients[0] = USER_TWO;
+        recipients[0] = WHO_RECIEVES_TWO;
         uint256 newFee = 1;
 
-        vm.startPrank(USER_ONE);
+        vm.startPrank(WHO_RECIEVES_ONE);
         vm.expectRevert();
         swapper.setRecipients(recipients);
         vm.expectRevert();
