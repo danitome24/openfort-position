@@ -23,29 +23,34 @@ contract InteractWithSwapper is Script {
         address maticTokenAddr = DevOpsTools.get_most_recent_deployment("MockMaticToken", block.chainid);
 
         address swapRouter = DevOpsTools.get_most_recent_deployment("MockSwapRouter", block.chainid);
-        address lastSwapperDeployed = DevOpsTools.get_most_recent_deployment("OpenfortSwapper", block.chainid);
-
-        //console.log("STablecoin %s", stablecoin);
-        //console.log("Matic %s", maticTokenAddr);
-        //console.log("SwapRouter contract address: %s", swapRouter);
-        //console.log("OpenfortSwap contract address: %s", lastSwapperDeployed);
+        address openfortSwapper = DevOpsTools.get_most_recent_deployment("OpenfortSwapper", block.chainid);
 
         IERC20 usdcToken = MockStablecoin(stablecoin);
         IERC20 maticToken = MockMaticToken(maticTokenAddr);
 
-        console.log("Before: Sender MATIC balance %s", maticToken.balanceOf(from));
-        console.log("Before: Swapper USDC balance: %s", usdcToken.balanceOf(swapRouter));
+        console.log("USDC Token add: %s", address(usdcToken));
+        console.log("MATIC Token add: %s", address(maticToken));
+        console.log("Swapper is %s", address(swapRouter));
+        console.log("Openfortswapper is %s", address(openfortSwapper));
 
+        console.log("Before: Sender MATIC balance %s", maticToken.balanceOf(from));
+        for (uint256 i = 0; i < recipients.length; i++) {
+            console.log("Before: Recipient %s USDC balance: %s", recipients[i], usdcToken.balanceOf(recipients[i]));
+        }
+        console.log("Before %s", usdcToken.balanceOf(swapRouter));
         vm.startBroadcast();
-        maticToken.approve(lastSwapperDeployed, AMOUNT_TO_SEND);
+        maticToken.approve(openfortSwapper, AMOUNT_TO_SEND);
         maticToken.approve(swapRouter, AMOUNT_TO_SEND);
 
-        OpenfortSwapper swapper = OpenfortSwapper(lastSwapperDeployed);
+        OpenfortSwapper swapper = OpenfortSwapper(openfortSwapper);
+
         swapper.setRecipients(recipients);
         swapper.swap(maticToken, AMOUNT_TO_SEND);
         vm.stopBroadcast();
-        console.log("Owner is %s", swapper.owner());
+
         console.log("After: Sender MATIC balance %s", maticToken.balanceOf(from));
-        console.log("After: Swapper USDC balance: %s", usdcToken.balanceOf(swapRouter));
+        for (uint256 i = 0; i < recipients.length; i++) {
+            console.log("After: Recipient %s USDC balance: %s", i, usdcToken.balanceOf(recipients[i]));
+        }
     }
 }

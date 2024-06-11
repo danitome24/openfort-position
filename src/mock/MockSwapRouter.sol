@@ -17,10 +17,8 @@ contract MockSwapRouter is ISwapRouter {
 
         IERC20(params.tokenIn).transferFrom(msg.sender, address(this), params.amountIn);
 
-        // Simulamos una salida de tokens, simplemente devolvemos el amountIn como amountOut
         amountOut = params.amountIn;
 
-        // Se "transfieren" tokens al destinatario
         IERC20(params.tokenOut).transfer(params.recipient, amountOut);
 
         return amountOut;

@@ -29,12 +29,9 @@ contract HelperConfig is Script {
     function getMainnetEthConfig() private view returns (NetworkConfig memory) {}
 
     function getOrCreateAnvilConfig() private returns (NetworkConfig memory) {
-        uint256 initialStablecoinAmountOnSwapRouter = 20;
-
         vm.startBroadcast();
         MockSwapRouter mockSwapRouter = new MockSwapRouter();
         MockStablecoin mockStablecoin = new MockStablecoin();
-        mockStablecoin.mint(address(mockSwapRouter), initialStablecoinAmountOnSwapRouter);
         vm.stopBroadcast();
 
         return NetworkConfig(address(mockSwapRouter), address(mockStablecoin));

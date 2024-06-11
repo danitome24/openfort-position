@@ -26,6 +26,6 @@ contract DeployOpenfortSwapper is Script {
 
         console.log("SwapRouter deployed at: %s", address(iSwapRouter));
         console.log("OpenfortSwapper deployed at: %s", address(swapper));
-        console.log("Stablecoin deployed at: %s", address(swapper));
+        console.log("Stablecoin deployed at: %s", address(stablecoin));
     }
 }

@@ -39,11 +39,14 @@ ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
 endif
 
 .PHONY: deploy-anvil
-deploy-anvil: deploy-tokens deploy-swapper mint-erc20-token
+deploy-anvil: deploy-tokens deploy-swapper mint-stable-token mint-erc20-token
 
 .PHONY: deploy-swapper
 deploy-swapper:
-	@forge script script/utils/DeployOpenfortSwapper.s.sol:DeployOpenfortSwapper $(NETWORK_ARGS)
+	@forge script script/DeployOpenfortSwapper.s.sol:DeployOpenfortSwapper $(NETWORK_ARGS)
+
+.PHONY: mins-stable-token
+mint-stable-token:
 	@forge script script/utils/MintTokens.s.sol:MintStableTokens $(NETWORK_ARGS)
 
 .PHONY: deploy-tokens
