@@ -41,8 +41,8 @@ endif
 .PHONY: deploy-anvil
 deploy-anvil: deploy-tokens deploy-swapper mint-stable-token mint-erc20-token
 
-.PHONY: deploy-sepolia
-deploy-sepolia: 
+#.PHONY: deploy-sepolia
+#deploy-sepolia: 
 #	@forge script script/utils/DeployFakeTokens.s.sol:DeployFakeTokens $(NETWORK_ARGS)
 #	@forge script script/utils/DeploySwapRouter.s.sol:DeploySwapRouter $(NETWORK_ARGS)
 #	@forge script script/DeployOpenfortSwapper.s.sol:DeployOpenfortSwapper $(NETWORK_ARGS)
