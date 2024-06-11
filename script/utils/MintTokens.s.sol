@@ -29,7 +29,7 @@ contract MintERC20Tokens is Script {
 
         vm.startBroadcast();
         MockMaticToken mockERC20 = MockMaticToken(latestMockERC20);
-        mockERC20.mint(0xaa4C60b784E2b3E485035399bF1b1aBDeD66A60f, MINT_AMOUNT);
+        mockERC20.mint(msg.sender, MINT_AMOUNT);
         vm.stopBroadcast();
     }
 }
