@@ -42,6 +42,9 @@ contract OpenfortSwapper is Ownable {
     }
 
     function swap(IERC20 token, uint256 amount) external {
+        require(address(token) != address(0), "ERC20 Token address not valid");
+        require(amount > 0, "Amount to swap must be > than 0");
+
         address from = msg.sender;
         address tokenAddress = address(token);
 
@@ -81,6 +84,7 @@ contract OpenfortSwapper is Ownable {
         uint256 amountOutAfterFee = amountOut - fee;
 
         IERC20(i_stablecoin).transfer(owner(), fee);
+        emit StablecoinSendedToRecipient(owner(), fee);
 
         uint256 amountOutPerRecipient = amountOutAfterFee / recipientsLength;
         for (uint256 i = 0; i < recipientsLength; i++) {

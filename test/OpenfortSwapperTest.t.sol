@@ -118,6 +118,8 @@ contract OpenfortSwapperTest is Test {
         vm.stopPrank();
 
         uint256 expectedAmountFee = 6;
+        vm.expectEmit(true, true, false, true);
+        emit StablecoinSendedToRecipient(OWNER, expectedAmountFee);
 
         vm.prank(WHO_SWAPS);
         swapper.swap(erc20Token, amountIn);
@@ -138,5 +140,23 @@ contract OpenfortSwapperTest is Test {
         vm.expectRevert();
         swapper.setShippingTime(OpenfortSwapper.ShippingTime.OnceADay);
         vm.stopPrank();
+    }
+
+    function testErc20TokenAddressCannotBeZero() public {
+        uint256 amountIn = 60;
+        IERC20 erc20Token = IERC20(address(0));
+
+        vm.prank(WHO_SWAPS);
+        vm.expectRevert("ERC20 Token address not valid");
+        swapper.swap(erc20Token, amountIn);
+    }
+
+    function testAmountToSwapMustBeGreaterThanZero() public {
+        uint256 amountIn = 0;
+        MockMaticToken erc20Token = new MockMaticToken();
+
+        vm.prank(WHO_SWAPS);
+        vm.expectRevert("Amount to swap must be > than 0");
+        swapper.swap(erc20Token, amountIn);
     }
 }
