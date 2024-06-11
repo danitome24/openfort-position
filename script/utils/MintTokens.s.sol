@@ -25,12 +25,11 @@ contract MintERC20Tokens is Script {
     uint256 constant MINT_AMOUNT = 20 * 1e18;
 
     function run() external {
-        address latestMockERC20 = DevOpsTools.get_most_recent_deployment("MockMaticToken", block.chainid);
-        address minter = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266; // First anvil address.
+        address latestMockERC20 = DevOpsTools.get_most_recent_deployment("MockMaticToken", block.chainid); // First anvil address.
 
         vm.startBroadcast();
         MockMaticToken mockERC20 = MockMaticToken(latestMockERC20);
-        mockERC20.mint(minter, MINT_AMOUNT);
+        mockERC20.mint(0xaa4C60b784E2b3E485035399bF1b1aBDeD66A60f, MINT_AMOUNT);
         vm.stopBroadcast();
     }
 }
