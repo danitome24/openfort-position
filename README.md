@@ -34,4 +34,8 @@ make swap
 
 ### Testing
 
-Run `make test`.
+Run
+ 
+```
+make test
+```
