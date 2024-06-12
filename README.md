@@ -3,7 +3,7 @@
 This repository contains the Openfort Swapper smart contract, which allows the swapping of ERC20 tokens to Stablecoins and the distribution of the Stablecoins to specified recipients. The contract uses Uniswap V3 for swapping and includes a fee mechanism. You can read all challenge at [SmarContractChallenge.md](./SmartContractChallenge.md)
 
 ## Requirements
-
+* Git
 * [Foundry](https://getfoundry.sh/): You'll need to install foundry to get this project run and test. [Here](https://book.getfoundry.sh/getting-started/installation) you can see how to install it.
 
 ## Development decisions
@@ -21,6 +21,12 @@ There are some features that I had no time to implement but I want to type what 
 
 ## Install
 
+1. First of all clone this repository in your local pc.
+```
+git clone git@github.com:danitome24/openfort-position.git
+```
+2. Copy `.env.example` to `.env` and replace placeholder data for real data. For local development you can leave this file blank.
+3. Then run:
 ```
 $ make install
 ```
@@ -31,10 +37,9 @@ This will install all git modules needed.
 
 There is a Makefile with most common commands to be used in project. These are helpful for development and testing stages. You can open it and use it. To start running this just follow this steps:
 
-1. Copy `.env.example` to `.env` and replace placeholder data for real data.
-2. Run `make anvil` to start development environment.
-3. Run `make deploy-anvil` to deploy all contracts.
-5. Run `make swap` to run a swap.
+1. Run `make anvil` to start development environment.
+2. Run `make deploy-anvil` to deploy all contracts.
+3. Run `make swap` to run a swap.
 
 Then you can see output like:
 
