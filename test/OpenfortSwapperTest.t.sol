@@ -128,6 +128,40 @@ contract OpenfortSwapperTest is Test {
         assertEq(stablecoin.balanceOf(OWNER), expectedAmountFee);
     }
 
+    function testSwapWithoutFee() public {
+        // Prepare
+        uint256 amountIn = 60 * 1e18; // 60 MockMaticToken
+        uint256 fee = 0; // 0%
+        uint256 expectedAmountPerRecipient = 30 * 1e18;
+        MockMaticToken erc20Token = new MockMaticToken();
+        erc20Token.mint(WHO_SWAPS, amountIn);
+
+        address[] memory recipients = new address[](2);
+        recipients[0] = RECIPIENT_ONE;
+        recipients[1] = RECIPIENT_TWO;
+
+        vm.startPrank(OWNER);
+        swapper.setRecipients(recipients);
+        swapper.setFee(fee);
+        vm.stopPrank();
+
+        vm.startPrank(WHO_SWAPS);
+        erc20Token.approve(address(swapRouter), amountIn);
+        erc20Token.approve(address(swapper), amountIn);
+        vm.stopPrank();
+
+        vm.expectEmit(true, true, false, true);
+        emit StablecoinSendedToRecipient(recipients[0], expectedAmountPerRecipient);
+        vm.expectEmit(true, true, false, true);
+        emit StablecoinSendedToRecipient(recipients[1], expectedAmountPerRecipient);
+
+        vm.prank(WHO_SWAPS);
+        swapper.swap(erc20Token, amountIn);
+
+        assertEq(stablecoin.balanceOf(RECIPIENT_ONE), expectedAmountPerRecipient);
+        assertEq(stablecoin.balanceOf(RECIPIENT_TWO), expectedAmountPerRecipient);
+    }
+
     function testOnlyOwnerCanModifyParameters() public {
         address[] memory recipients = new address[](1);
         recipients[0] = RECIPIENT_TWO;

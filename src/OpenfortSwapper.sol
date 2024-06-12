@@ -7,8 +7,11 @@ import {ISwapRouter} from "@uniswap/v3-periphery/contracts/interfaces/ISwapRoute
 import {TransferHelper} from "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import {HelperConfig} from "../script/HelperConfig.s.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {FeeCalculator} from "./FeeCalculator.sol";
 
 contract OpenfortSwapper is Ownable {
+    using FeeCalculator for uint256;
+
     event StablecoinSendedToRecipient(address indexed to, uint256 amount);
 
     address[] s_recipients;
@@ -19,7 +22,6 @@ contract OpenfortSwapper is Ownable {
     address immutable i_stablecoin;
 
     uint24 constant POOL_FEE = 3000;
-    uint256 constant PERCENTAGE_BASE = 1000; // Base 1000.
 
     enum ShippingTime {
         Immediatly,
@@ -84,7 +86,7 @@ contract OpenfortSwapper is Ownable {
         address[] memory recipients = s_recipients;
         uint256 recipientsLength = recipients.length;
 
-        uint256 fee = (amountOut * s_fee) / PERCENTAGE_BASE;
+        uint256 fee = amountOut.calculateFeeFromAmount(s_fee);
         uint256 amountOutAfterFee = amountOut - fee;
 
         IERC20(i_stablecoin).transfer(owner(), fee);
