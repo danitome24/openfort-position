@@ -6,7 +6,7 @@ import {OpenfortSwapper} from "../src/OpenfortSwapper.sol";
 import {ISwapRouter} from "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import {MockSwapRouter} from "../src/mock/MockSwapRouter.sol";
 import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
-import {NetworkConfig} from "./NetworkConfig.s.sol";
+import {HelperConfig} from "./HelperConfig.s.sol";
 
 contract DeployOpenfortSwapper is Script {
     uint256 private constant INITIAL_FEE = 30; // 30%
@@ -14,7 +14,7 @@ contract DeployOpenfortSwapper is Script {
     function run() public {
         address[] memory initialRecipients = new address[](0);
 
-        NetworkConfig networkConfig = new NetworkConfig();
+        HelperConfig networkConfig = new HelperConfig();
         (address swapRouter, address stablecoin) = networkConfig.activeNetworkConfig();
 
         ISwapRouter iSwapRouter = ISwapRouter(swapRouter);

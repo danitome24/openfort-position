@@ -6,7 +6,7 @@ import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
 import {MockSwapRouter} from "../src/mock/MockSwapRouter.sol";
 import {MockStablecoin} from "../src/mock/MockStablecoin.sol";
 
-contract NetworkConfig is Script {
+contract HelperConfig is Script {
     NetworkConfig public activeNetworkConfig;
 
     struct NetworkConfig {
