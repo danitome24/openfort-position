@@ -9,10 +9,12 @@ import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 
 contract DeployOpenfortSwapper is Script {
-    uint256 private constant INITIAL_FEE = 30; // 30%
+    uint256 private constant INITIAL_FEE = 100; // 10%
 
     function run() public {
-        address[] memory initialRecipients = new address[](0);
+        address[] memory initialRecipients = new address[](2);
+        initialRecipients[0] = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
+        initialRecipients[1] = 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC;
 
         HelperConfig networkConfig = new HelperConfig();
         (address swapRouter, address stablecoin) = networkConfig.activeNetworkConfig();

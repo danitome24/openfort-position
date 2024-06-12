@@ -71,6 +71,14 @@ check-balance:
 	@forge script script/utils/CheckBalance.s.sol:CheckBalance $(NETWORK_ARGS)
 
 SENDER_ADDRESS := 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-.PHONY:
+.PHONY: swap
 swap:
-	forge script script/InteractWithSwapper.s.sol:InteractWithSwapper --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)
+	@forge script script/InteractWithSwapper.s.sol:Swap --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)
+
+.PHONY: set-fee
+set-fee:
+	@forge script script/InteractWithSwapper.s.sol:SetFee --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)
+
+.PHONY: set-recipients
+set-recipients:
+	@forge script script/InteractWithSwapper.s.sol:SetRecipients --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)

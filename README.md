@@ -39,7 +39,12 @@ There is a Makefile with most common commands to be used in project. These are h
 
 1. Run `make anvil` to start development environment.
 2. Run `make deploy-anvil` to deploy all contracts.
-3. Run `make swap` to run a swap.
+
+### Interactions
+
+At `script/InteractWithSwapper.s.sol` you can see all interactions available with OpenFortSwapper. You can open it and change values. Just use it from Makefile. Interactions available.
+
+1. Run `make swap` to run a swap.
 
 Then you can see output like:
 
@@ -59,6 +64,10 @@ Then you can see output like:
 ```
 
 First of all there's all deployed contract addresses. Then initial balances from sender and recipients and finally all balances after swap.
+
+2. Run `make set-fee` to change fee.
+
+3. Run `make set-recipients` to change stablecoin recipients.
 
 ### Deploy
 
