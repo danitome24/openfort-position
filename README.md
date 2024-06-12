@@ -65,9 +65,9 @@ Then you can see output like:
 
 First of all there's all deployed contract addresses. Then initial balances from sender and recipients and finally all balances after swap.
 
-2. Run `make set-fee` to change fee.
+2. Run `make set-fee` to change fee. Or `make get-fee` to get it.
 
-3. Run `make set-recipients` to change stablecoin recipients.
+3. Run `make set-recipients` to change stablecoin recipients. Or `make get-recipients` to get it.
 
 ### Deploy
 

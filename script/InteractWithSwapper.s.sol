@@ -84,3 +84,24 @@ contract Swap is Script {
         }
     }
 }
+
+contract GetFee is Script {
+    function run() external view {
+        address openfortSwapper = DevOpsTools.get_most_recent_deployment("OpenfortSwapper", block.chainid);
+        OpenfortSwapper swapper = OpenfortSwapper(openfortSwapper);
+
+        console.log("Fee is set to %s", swapper.getFee());
+    }
+}
+
+contract GetRecipients is Script {
+    function run() external view {
+        address openfortSwapper = DevOpsTools.get_most_recent_deployment("OpenfortSwapper", block.chainid);
+        OpenfortSwapper swapper = OpenfortSwapper(openfortSwapper);
+        address[] memory recipients = swapper.getRecipients();
+
+        for (uint256 index = 0; index < recipients.length; index++) {
+            console.log("Recipient %s with address %s", index, recipients[index]);
+        }
+    }
+}

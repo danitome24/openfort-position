@@ -33,6 +33,11 @@ test :; forge test
 .PHONY: anvil
 anvil :; anvil -m 'test test test test test test test test test test test junk' --steps-tracing 
 
+
+#####
+# DEPLOYMENT
+#####
+
 NETWORK_ARGS := --rpc-url http://localhost:8545 --private-key $(DEFAULT_ANVIL_KEY) --broadcast
 
 ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
@@ -70,6 +75,10 @@ mint-erc20-token:
 check-balance:
 	@forge script script/utils/CheckBalance.s.sol:CheckBalance $(NETWORK_ARGS)
 
+######
+# INTERACTIONS 
+######
+
 SENDER_ADDRESS := 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 .PHONY: swap
 swap:
@@ -82,3 +91,11 @@ set-fee:
 .PHONY: set-recipients
 set-recipients:
 	@forge script script/InteractWithSwapper.s.sol:SetRecipients --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)
+
+.PHONY: get-fee
+get-fee:
+	@forge script script/InteractWithSwapper.s.sol:GetFee $(NETWORK_ARGS)
+
+.PHONY: get-recipients
+get-recipients:
+	@forge script script/InteractWithSwapper.s.sol:GetRecipients $(NETWORK_ARGS)
