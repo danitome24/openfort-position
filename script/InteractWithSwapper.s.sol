@@ -7,7 +7,6 @@ import {OpenfortSwapper} from "../src/OpenfortSwapper.sol";
 import {MockMaticToken} from "../src/mock/MockMaticToken.sol";
 import {MockStablecoin} from "../src/mock/MockStablecoin.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {HelperConfig} from "./HelperConfig.s.sol";
 import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
 
 contract InteractWithSwapper is Script {
