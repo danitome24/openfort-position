@@ -10,7 +10,7 @@ help:
 	@echo "  make swap [ARGS=...]\n    example: make swap ARGS=\"--network sepolia\""
 
 .PHONY: all
-all: clean remove install update build
+all: clean remove install build
 
 # Clean the repo
 .PHONY: clean
